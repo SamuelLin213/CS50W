@@ -1,0 +1,18 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Watching {{ user.user_watchlist.all.count }} items</h2>
+
+    {% for watchItem in user.user_watchlist.all %}
+        <a href="{% url 'listing' item=watchItem.id%}" class="listing-box">
+            <div style="width: 50%; display: flex; align-items: center; justify-content: center;">
+                <img src="{{ watchItem.image }}" class="listing-image">
+            </div>
+            <div class="listing-text">
+                <div class="listing-title"><b>{{ watchItem.title }}</b></div>                    
+                <div class="listing-price"><b>Price: </b>${{ watchItem.bid }}</div>
+                <div class="listing-description">{{ watchItem.description }}</div>
+            </div>
+        </a>
+    {% endfor %}
+{% endblock %}

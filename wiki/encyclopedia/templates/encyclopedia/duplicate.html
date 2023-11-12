@@ -1,0 +1,11 @@
+{% extends "encyclopedia/layout.html" %} <!--uses layout.html as template-->
+
+{% block title %}
+    Article Not Created
+{% endblock %}
+
+{% block body %}
+    <h1>Error! Article called "{{title}}" already exists.</h1>
+
+    <p>Please <a href="{% url 'create' %}">try again</a> with a unique name.</p>
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Listing: {{listing.title}}</h2>
+
+    {% if user != listing.seller and user.is_authenticated%}
+    <div class="watchlist-box">
+        {% if listing in user.user_watchlist.all %}
+        <form action="{% url 'watchlist' listing.id 'remove' %}" method="post">
+            {% csrf_token %}
+            <input class="watchlist-text" type="submit" value="Remove From Watchlist">
+        </form>
+        {% else %}
+        <form action="{% url 'watchlist' listing.id 'add' %}" method="post">
+            {% csrf_token %}
+            <input class="watchlist-text" type="submit" value="Add To Watchlist">
+        </form>
+        {% endif %}       
+    </div>
+    {% endif %}
+
+    
+    <img src="{{ listing.image }}" class="details-image">
+    <div>
+        <div class="details-description">{{ listing.description }}</div>                    
+        <div class="details-price"><b>${{ listing.bid }}</b></div> 
+        <div class="bid-num">{{ listing.numBids }} bid(s) so far.
+            {% if user == listing.buyer %}
+                Your bid is the current bid.
+            {% elif user == listing.seller %}
+                Close the listing.
+            {% else %}
+                Place a bid.
+            {% endif %}
+        </div>       
+    </div>
+    
+    <!-- user is authenticated; can bid on item -->
+    {% if user.is_authenticated %}
+        <!-- seller can close the listing -->
+        {% if user == listing.seller %}
+        <div class="watchlist-box">
+            {% if listing.active %}
+            <form action="{% url 'close' listing.id %}" method="post">
+                {% csrf_token %}
+                <input class="watchlist-text" type="submit" value="Close the listing">
+            </form>
+            {% else %}
+            <form action="{% url 'watchlist' listing.id 'add' %}" method="post">
+                {% csrf_token %}
+                <input class="watchlist-text" type="submit" value="Listing closed" disabled="disabled">
+            </form>
+            {% endif %}       
+        </div>
+        <!-- buyer can either bid or listing is closed -->
+        {% else %}
+            <!-- listing is active; user can bid -->
+            {% if listing.active %}
+            <form class="bid-form" action="{% url 'listing' listing.id %}" method="post">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                <div class="fieldWrapper">
+                    {{ form.bid }}
+                    {% for field, error in form.errors.items %}
+                        <div style="color: red;">
+                            {{ error | striptags }}
+                        </div>                
+                    {% endfor %}
+                </div>
+                <input class="bid-button" type="submit" value="Place Bid">
+            </form>
+            <!-- listing is closed -->
+            {% else %}
+            <div style="display: flex;">Bid is closed. 
+                {% if user == listing.buyer %}
+                <div style="color: green;">&nbsp;You won the bid.</div>
+                {% endif %}
+            </div>
+            {% endif %}
+        {% endif %}
+    <!-- user isn't authenticated; can't bid -->
+    {% else %} 
+        {% if listing.active %}
+        <form class="bid-form" action="{% url 'listing' listing.id %}" method="post">
+            {% csrf_token %}
+            <input type="text">
+            <input class="bid-button" type="submit" value="Place Bid" disabled="disabled">
+        </form>
+        {% else %}
+        <form class="bid-form" action="{% url 'listing' listing.id %}" method="post">
+            {% csrf_token %}
+            <input type="text">
+            <input class="bid-button" type="submit" value="Listing closed" disabled="disabled">
+        </form>
+        {% endif %}
+    {% endif %}
+    
+    <b style="font-size: 30px;">Details</b>
+    <ul>
+        <li>Listed by: {{ listing.seller.username }}</li>
+        <li>Category: 
+            {% if listing.category is None %}
+                No Category Listed
+            {% else %}
+                {{ listing.category }}
+            {% endif %}
+        </li>
+    </ul>
+
+    <b style="font-size: 30px;">Comments</b>
+    {% if user.is_authenticated %}
+    <form class="bid-form" action="{% url 'comment' listing.id %}" method="post">
+        {% csrf_token %}
+        {{ form2 }}
+        <input class="bid-button" type="submit" value="Comment">
+    </form>
+    {% else %}
+    <form class="bid-form" action="{% url 'comment' listing.id %}" method="post">
+        {% csrf_token %}
+        {{ form2 }}
+        <input class="bid-button" type="submit" value="Comment" disabled="disabled">
+    </form>
+    {% endif %}
+    <div style="height: 15px;"></div>
+    {% for comment in listing.listing_comments.all %}
+        <div class="comment">
+            <div class="commenter"> {{ comment.user.username }} </div>
+            <div class="commentContent"> {{ comment.comment }} </div>
+        </div>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Categories</h2>
+
+    <div style="display: flex; flex-direction: column;">
+        {% for cat in cats %}
+            <a style="margin: 5px 0px;" href="{% url 'categoryListings' catId=cat.id %}"> {{ cat.name }} ({{cat.category_listings.all.count}})</a>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+
+<!-- user.user_watchlist.all.count -->

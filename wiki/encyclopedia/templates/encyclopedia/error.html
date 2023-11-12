@@ -1,0 +1,12 @@
+{% extends "encyclopedia/layout.html" %} <!--uses layout.html as template-->
+
+{% block title %}
+    No Article Found!
+{% endblock %}
+
+{% block body %}
+    <h1>Error! No article called "{{title}}"</h1>
+
+    <p>Please try again, or double-check your spelling.</p>
+
+{% endblock %}

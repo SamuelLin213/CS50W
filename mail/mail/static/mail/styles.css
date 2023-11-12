@@ -1,0 +1,34 @@
+textarea {
+    min-height: 400px;
+}
+
+.email-item {
+    border-style: solid;
+    border-color: black;
+    width: 100%;
+    margin: 10px 0px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+.email-email {
+    padding: 10px;
+}
+
+.email-subject {
+    padding: 10px 20px;
+}
+
+.email-date {
+    padding: 10px 0px;
+    margin-left: auto;
+    margin-right: 10px;
+}
+
+.read {
+    background-color: gray;
+}
+
+.notRead {
+    background-color: white;
+}
